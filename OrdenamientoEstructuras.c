@@ -1,3 +1,9 @@
+// Nombre: David Leobardo Pérez Cruz
+// Fecha: 28/03/2022
+// Descripción: Algoritmo que realiza el ordenamiento por nombre, apellido paterno y apellido materno
+// de todos los alumnos de programación estructurada por medio del uso de estructuras
+// en el lenguaje c
+
 #include<stdio.h>
 #include<string.h>
 
@@ -13,10 +19,10 @@ struct Alumnos{
 }
 typedef Alumnos;
 
-int Ordenar(Alumnos Estudiantes[], int j);
+int Comparar(Alumnos Estudiantes[], int j, int ordenamiento);
 int Verificar_Swap(int resultado);
 void Swap(Alumnos *nombre1, Alumnos *nombre2);
-void Printar_Lista(Alumnos Students[]);     
+void Printar_Lista(Alumnos Students[], int ordenamiento);     
 
 
 int main(){
@@ -32,7 +38,7 @@ int main(){
     strcpy(Alumn[6].nombre, "Carlos Javier"); strcpy(Alumn[6].apellido_paterno, "Calderón"); strcpy(Alumn[6].apellido_materno, "Delgado");  
     strcpy(Alumn[7].nombre, "Adjany"); strcpy(Alumn[7].apellido_paterno, "Armenta"); strcpy(Alumn[7].apellido_materno, "Aguilar");  
     strcpy(Alumn[8].nombre, "Jose Carlos"); strcpy(Alumn[8].apellido_paterno, "Leo"); strcpy(Alumn[8].apellido_materno, "Fernandez");  
-    strcpy(Alumn[9].nombre, "Luis Miguel"); strcpy(Alumn[9].apellido_paterno, "Medina"); strcpy(Alumn[9].apellido_materno, "Ávila");  
+    strcpy(Alumn[9].nombre, "Luis Miguel"); strcpy(Alumn[9].apellido_paterno, "Medina"); strcpy(Alumn[9].apellido_materno, "Avila");  
     strcpy(Alumn[10].nombre, "Juan Omar"); strcpy(Alumn[10].apellido_paterno, "Trivellari"); strcpy(Alumn[10].apellido_materno, "Ramirez");  
     strcpy(Alumn[11].nombre, "Mariam Guadalupe"); strcpy(Alumn[11].apellido_paterno, "Moreno"); strcpy(Alumn[11].apellido_materno, "Farah");  
     strcpy(Alumn[12].nombre, "Adrian"); strcpy(Alumn[12].apellido_paterno, "Fonseca"); strcpy(Alumn[12].apellido_materno, "Loria");      
@@ -50,35 +56,74 @@ int main(){
     strcpy(Alumn[24].nombre, "Alan Alfonso"); strcpy(Alumn[24].apellido_paterno, "Pérez"); strcpy(Alumn[24].apellido_materno, "Romero");
     
 
-    int i, j;
-    for (i=0; i<CANTIDAD_ALUMNOS; i++){
-        for(j=0; j<CANTIDAD_ALUMNOS-1; j++){
-            Ordenar(Alumn, j);
-            if(Verificar_Swap(Ordenar(Alumn, j))> 0){
-                
-                Alumnos *p_alumno1, *p_alumno2;
-                p_alumno1 = &Alumn[j];
-                p_alumno2 = &Alumn[j+1];
-                Swap(p_alumno1, p_alumno2);
-                
+    int i, j, tipo_ordenamiento;
+    for(tipo_ordenamiento=1; tipo_ordenamiento<=3; tipo_ordenamiento++){
+        for (i=0; i<CANTIDAD_ALUMNOS; i++){
+            for(j=0; j<CANTIDAD_ALUMNOS-1; j++){
+                Comparar(Alumn, j, tipo_ordenamiento);
+                if(Verificar_Swap(Comparar(Alumn, j, tipo_ordenamiento))> 0){
+                    
+                    Alumnos *p_alumno1, *p_alumno2;
+                    p_alumno1 = &Alumn[j];
+                    p_alumno2 = &Alumn[j+1];
+                    Swap(p_alumno1, p_alumno2);
+                    
+                }
             }
         }
+        printf("\n\n--------------------------------------\n");
+        if(tipo_ordenamiento == 1){
+            printf("\nEl ordenamiento por nombres es: \n");
+        }
+        else if(tipo_ordenamiento == 2){
+            printf("\nEl ordenamiento por apellido paterno es: \n");
+        }
+        
+        else if(tipo_ordenamiento == 3){
+            printf("\nEl ordenamiento por apellido materno es: \n");
+        }
+
+        Printar_Lista(Alumn, tipo_ordenamiento);   
     }
-    Printar_Lista(Alumn);    
+     
 }
 
-int Ordenar(Alumnos Estudiantes[], int j){
+int Comparar(Alumnos Estudiantes[], int j, int ordenamiento){
     
     int comparacion;
+    if(ordenamiento==1){
+        comparacion = strcmp(Estudiantes[j].nombre, Estudiantes[j+1].nombre);
+        if(comparacion == 0){
+            comparacion = strcmp(Estudiantes[j].apellido_paterno, Estudiantes[j+1].apellido_paterno);
 
-    comparacion = strcmp(Estudiantes[j].nombre, Estudiantes[j+1].nombre);
-    if(comparacion == 0){
+            if(comparacion == 0){
+                comparacion = strcmp(Estudiantes[j].apellido_materno, Estudiantes[j+1].apellido_materno);
+            }
+        } 
+    }
+
+    else if(ordenamiento == 2){
         comparacion = strcmp(Estudiantes[j].apellido_paterno, Estudiantes[j+1].apellido_paterno);
-
         if(comparacion == 0){
             comparacion = strcmp(Estudiantes[j].apellido_materno, Estudiantes[j+1].apellido_materno);
-        }
-    }  
+
+            if(comparacion == 0){
+                comparacion = strcmp(Estudiantes[j].nombre, Estudiantes[j+1].nombre);
+            }
+        } 
+    }
+
+    else if(ordenamiento == 3){
+        comparacion = strcmp(Estudiantes[j].apellido_materno, Estudiantes[j+1].apellido_materno);
+        if(comparacion == 0){
+            comparacion = strcmp(Estudiantes[j].apellido_paterno, Estudiantes[j+1].apellido_paterno);
+
+            if(comparacion == 0){
+                comparacion = strcmp(Estudiantes[j].nombre, Estudiantes[j+1].nombre);
+            }
+        } 
+    }
+     
     return comparacion;
 }
 
@@ -103,10 +148,23 @@ void Swap(Alumnos *nombre1, Alumnos *nombre2){
     
 }
 
-void Printar_Lista(Alumnos Students[]){
+void Printar_Lista(Alumnos Students[], int ordenamiento){
     int i;
+    if(ordenamiento == 1){
+        for(i=0; i<CANTIDAD_ALUMNOS; i++){
+            printf("%s %s %s\n " ,  Students[i].nombre, Students[i].apellido_paterno, Students[i].apellido_materno);
+        }
+    }
+    
+    if(ordenamiento == 2){
+        for(i=0; i<CANTIDAD_ALUMNOS; i++){
+            printf("%s %s %s\n " ,  Students[i].apellido_paterno, Students[i].apellido_materno, Students[i].nombre);
+        }
+    }
 
-    for(i=0; i<CANTIDAD_ALUMNOS; i++){
-        printf("%s %s %s\n " ,  Students[i].nombre, Students[i].apellido_paterno, Students[i].apellido_materno);
+    if(ordenamiento == 3){
+        for(i=0; i<CANTIDAD_ALUMNOS; i++){
+            printf("%s %s %s\n " ,  Students[i].apellido_materno, Students[i].apellido_paterno, Students[i].nombre);
+        }
     }
 }
